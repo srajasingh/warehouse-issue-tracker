@@ -1,8 +1,16 @@
 # ⚙️ Warehouse Issue Tracker
 
-A web-based production issue tracking system built to simulate the L1 Support workflow in a warehouse/plant environment. Warehouse supervisors can log technical issues, operations teams can track status, and the core development team gets structured, clear problem reports.
+A web-based production issue tracking system built to simulate the L1 Support workflow in a warehouse/plant environment. Warehouse supervisors log technical issues, operations teams track status, and the core development team gets structured, clear problem reports.
 
 **Tech Stack:** Java · JSP · Servlets · MySQL · JDBC · Apache Tomcat · HTML/CSS
+
+---
+
+## 🎥 Live Demo
+
+▶️ **[Watch Demo on Loom](YOUR_LOOM_LINK_HERE)** — 2-min walkthrough: logging an issue, updating status, resolving it
+
+🌐 **[Live App on Railway](YOUR_RAILWAY_URL_HERE)**
 
 ---
 
@@ -21,67 +29,73 @@ A web-based production issue tracking system built to simulate the L1 Support wo
 
 ```
 warehouse-issue-tracker/
-├── src/main/
-│   ├── java/com/tracker/
-│   │   ├── model/Issue.java          # POJO - issue data model
-│   │   ├── dao/IssueDAO.java         # All CRUD operations via JDBC
-│   │   ├── servlet/IssueServlet.java # Handles list, add, delete
-│   │   ├── servlet/UpdateServlet.java# Handles status update
-│   │   └── util/DBConnection.java    # MySQL JDBC connection manager
-│   └── webapp/
-│       ├── WEB-INF/
-│       │   ├── issues.jsp            # Main dashboard
-│       │   ├── update.jsp            # Update status form
-│       │   └── web.xml               # Deployment descriptor
-│       ├── css/style.css             # Stylesheet
-│       └── index.jsp                 # Entry point (redirects to /issues)
-├── sql/
-│   └── schema.sql                    # DB schema + sample data
-└── pom.xml                           # Maven build config
+├── pom.xml
+├── Procfile                                    ← Railway deployment config
+├── sql/schema.sql                              ← Run this in MySQL first
+└── src/main/
+    ├── java/com/tracker/
+    │   ├── model/Issue.java                    ← POJO data model
+    │   ├── dao/IssueDAO.java                   ← All CRUD via JDBC
+    │   ├── servlet/IssueServlet.java           ← List, add, delete
+    │   ├── servlet/UpdateServlet.java          ← Status update
+    │   └── util/DBConnection.java             ← MySQL connection (local + Railway)
+    └── webapp/
+        ├── WEB-INF/issues.jsp                  ← Main dashboard
+        ├── WEB-INF/update.jsp                  ← Update form
+        ├── css/style.css
+        └── index.jsp
 ```
 
 ---
 
-## Setup & Run
+## Run Locally
 
 ### Prerequisites
-- Java 11+
-- Apache Tomcat 10+
-- MySQL 8+
-- Maven 3.6+
+- Java 11+, Maven 3.6+, MySQL 8+, Apache Tomcat 10+
 
-### Step 1 — Set up the database
-```sql
--- In MySQL Workbench or terminal:
-source sql/schema.sql
-```
-
-### Step 2 — Update DB credentials
-Open `src/main/java/com/tracker/util/DBConnection.java` and update:
-```java
-private static final String DB_USER = "root";   // your MySQL username
-private static final String DB_PASS = "root";   // your MySQL password
-```
-
-### Step 3 — Build the WAR
+### Steps
 ```bash
+# 1. Set up database
+mysql -u root -p < sql/schema.sql
+
+# 2. Update your MySQL password in:
+#    src/main/java/com/tracker/util/DBConnection.java
+
+# 3. Build
 mvn clean package
+
+# 4. Copy WAR to Tomcat webapps/ folder, start Tomcat
+# Open: http://localhost:8080/warehouse-issue-tracker/
 ```
 
-### Step 4 — Deploy to Tomcat
-Copy `target/warehouse-issue-tracker.war` to Tomcat's `webapps/` folder, then start Tomcat:
-```bash
-# Linux/Mac
-$CATALINA_HOME/bin/startup.sh
+---
 
-# Windows
-%CATALINA_HOME%\bin\startup.bat
-```
+## Deploy on Railway
 
-### Step 5 — Open in browser
-```
-http://localhost:8080/warehouse-issue-tracker/
-```
+### Step 1 — Create Railway account
+Go to **railway.app** → Sign up with GitHub
+
+### Step 2 — Create new project
+- Click **New Project**
+- Select **Deploy from GitHub repo**
+- Choose `warehouse-issue-tracker`
+- Railway auto-detects Maven and starts building
+
+### Step 3 — Add MySQL database
+- Inside your project, click **+ New**
+- Select **Database** → **MySQL**
+- Railway creates a MySQL instance and auto-injects these env variables into your app:
+  `MYSQLHOST`, `MYSQLPORT`, `MYSQLDATABASE`, `MYSQLUSER`, `MYSQLPASSWORD`
+- The app's `DBConnection.java` reads these automatically — no manual config needed
+
+### Step 4 — Run schema on Railway MySQL
+- Click your MySQL service → **Connect** tab
+- Copy the connection string and run it in MySQL Workbench or TablePlus
+- Paste and run the contents of `sql/schema.sql`
+
+### Step 5 — Get your live URL
+- Click your app service → **Settings** → **Domains** → **Generate Domain**
+- Your app is live at `https://your-app-name.up.railway.app`
 
 ---
 
@@ -109,17 +123,16 @@ CREATE TABLE issues (
 
 | Phase | Details |
 |---|---|
-| Requirements | Modelled on real Lenskart L1 support workflow — ops teams logging plant issues |
-| Design | MVC architecture: Model (Issue.java) → DAO (IssueDAO.java) → Servlet → JSP View |
+| Requirements | Modelled on real L1 support workflow — ops teams logging plant issues |
+| Design | MVC: Model → DAO → Servlet → JSP View |
 | Development | Java Servlets + JSP + JDBC; clean separation of concerns |
-| Testing | Manual testing across CRUD flows, edge cases (empty fields, invalid IDs) |
-| Deployment | WAR deployment on Apache Tomcat 10 |
-| Documentation | README, inline code comments, SQL schema file |
+| Testing | Manual testing across all CRUD flows and edge cases |
+| Deployment | WAR on Tomcat locally; Railway cloud deployment |
+| Documentation | README, inline comments, SQL schema |
 
 ---
 
 ## Author
 
-**Sraja Singh**  
-B.E. Computer Science, Chandigarh University  
+**Sraja Singh** — B.E. Computer Science, Chandigarh University  
 [linkedin.com/in/sraja-singh](https://linkedin.com/in/sraja-singh) · [github.com/srajasingh](https://github.com/srajasingh)
